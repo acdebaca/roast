@@ -45,9 +45,6 @@ var server = http.createServer(function (req, res) {
         // Write out content header
         res.writeHead(200, {'Content-Type': 'text/plain'});
 
-        // Write out column header row
-        //res.write(rows[0] + "\n");
-
         // Write out rows that match query
         var resultCollection = [];
         for (var i = 1; i < rows.length; i++) {
@@ -62,11 +59,9 @@ var server = http.createServer(function (req, res) {
           if (match) {
             var resultEntry = {};
             for (var field in fields) {
-              //res.write("Field: " + fields[field] + "\n");
-              resultEntry[field] = cells[fieldIndices[fields[field]]];
+              resultEntry[fields[field]] = cells[fieldIndices[fields[field]]];
             }
             resultCollection.push(resultEntry);
-            //res.write(rows[i] + "\n");
           }
         }
 
