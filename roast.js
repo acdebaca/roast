@@ -99,7 +99,31 @@ var server = http.createServer(function (req, res) {
           res.end(JSON.stringify(resultCollection));
         });
       } else if (validSources[dataSource].type == "http") {
-        res.end("HTTP request");
+        // Request the URI in the config file
+        var srcObj = validSources[dataSource];
+        var httpOptions = { 
+          hostname: srcObj.hostname,
+          port: srcObj.port,
+          path: srcObj.path,
+          method: srcObj.method
+        };
+
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        var targetReq = http.request(httpOptions, function(targetRes) {
+          targetRes.setEncoding('utf8');
+          targetRes.on('data', function(chunk) {
+            res.write(chunk);
+          });
+          targetRes.on('end', function() {
+            res.end();
+          });
+        });
+
+        targetReq.on('error', function(err) {
+          console.log('ERROR: ' + err);
+        });
+
+        targetReq.end();
       }
     } else if (dataSource == "") {
       res.writeHead(200, {'Content-Type': 'text/plain'});
